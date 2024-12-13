@@ -106,6 +106,7 @@ $ az webapp config appsettings set --resource-group <ResourceGroup> --name <AppN
   AZURE_CLIENT_APP_ID="<your application id copied from app registration on Azure portal>" \
   AZURE_TENANT_ID="<your tenant id copied from app registration on Azure portal>" \
   TOKEN_CACHE_PATH=None
+# SCM基本認証を有効化するコマンドを追加するかも
 
 # フロントエンドアプリのビルド
 $ cd src/frontend
