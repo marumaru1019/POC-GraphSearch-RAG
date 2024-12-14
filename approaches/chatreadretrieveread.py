@@ -111,9 +111,10 @@ If you cannot generate a search query, return only the number 0.
             }
             return ({}, query_not_found_msg)
 
-        #print("Generated_query:"+generated_query)
+        print("Generated_query:"+generated_query)
 
         # Step2. クエリを使ってGraphを検索する
+        print("obo_token:"+str(obo_token))
         client = GraphClientBuilder().get_client(obo_token)
 
         request_body = QueryPostRequestBody(
@@ -127,8 +128,23 @@ If you cannot generate a search query, return only the number 0.
                 )
             ]
         )
-        
-        search_result = await client.search.query.post(body = request_body)
+        print("Request_body:"+str(request_body))
+
+        try:
+            search_result = await client.search.query.post(body = request_body)
+        except Exception as e:
+            print("Error:"+str(e))
+            search_error_msg ={
+                'choices':[
+                    {
+                        'message':{
+                            'role':"assistant",
+                            'content':"検索エラーが発生しました。もう一度お試しください。"
+                        }
+                    }
+                ]
+            }
+            return ({}, search_error_msg)
         
         #search_resultがない場合は、クエリ生成したクエリを返す
         if search_result.value[0].hits_containers[0].total == 0:
@@ -144,7 +160,7 @@ If you cannot generate a search query, return only the number 0.
             }
             return ({}, source_not_found_msg)
 
-        #print(search_result)
+        print(search_result)
         #ここではsummaryをソースにしているが、文章量によってはコンテンツ別にデータを取ったほうがいいかもしれない
         results = [
                 hit.resource.id + ": " + hit.summary
