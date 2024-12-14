@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
     plugins: [react()],
     build: {
-        outDir: "../backend/static",
+        outDir: "../static",
         emptyOutDir: true,
         sourcemap: true,
         rollupOptions: {
@@ -25,10 +25,10 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            "/content/": "http://127.0.0.1:5000",
-            "/auth_setup": "http://127.0.0.1:5000",
-            "/ask": "http://127.0.0.1:5000",
-            "/chat": "http://127.0.0.1:5000"
+            "/content/": "http://127.0.0.1:8000",
+            "/auth_setup": "http://127.0.0.1:8000",
+            "/ask": "http://127.0.0.1:8000",
+            "/chat": "http://127.0.0.1:8000"
         }
     }
 });
