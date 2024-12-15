@@ -46,7 +46,7 @@
 1. [Microsoft Entra ID](https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview) > アプリの登録 の順に選択していき、アプリ登録一覧画面で「新規登録」を選択します。
 1. 「名前」を入力します。（例：ChatGPT-GraphSearch）
 1. 「サポートされているアカウントの種類」で「この組織ディレクトリのみに含まれるアカウント」を選択
-1. 「リダイレクトURI」でプラットフォームを「シングルページアプリケーション(SPA)」、URIを「http://localhost:5173/redirect」に設定します。
+1. 「リダイレクトURI」でプラットフォームを「シングルページアプリケーション(SPA)」、URIを「http://localhost:8000/redirect」に設定します。
 1. 「登録」をクリックします。
 1. 登録されたアプリ登録に移動し、ブレードメニューの「APIのアクセス許可」にアクセスします。
 1. 「アクセス許可の追加」から「Microsoft Graph」>「委任されたアクセス許可」の順に選択していき「Files.Read.All」と「Sites.Read.All」にチェックを入れて「アクセス許可の追加」を選択します。
@@ -72,7 +72,7 @@ https://github.com/07JP27/azureopenai-internal-microsoft-search/blob/52053b6c672
 1. ターミナルで`az login`を実行してAzure OpenAI ServiceのリソースのRBACに登録したアカウントでAzureにログインします。
 1. ターミナルなどでクローンしたファイルの「src/backend」に移動して「pip install -r requirements.txt」を実行します。パッケージのインストールが完了するまでしばらく待ちます。
 1. 別ターミナルなどを開きクローンしたファイルの「src/frontend」に移動して「npm install」を実行します。パッケージのインストールが完了するまでしばらく待ちます。
-1. 「src/backend」内に.envファイルを作成して[.env-sample](./src/backend/.env-sample)に記載されている内容をコピーします。
+1. 「src/backend」内に.envファイルを作成して[.env-sample](./src/backend/.env-sample)に記載されている内容をコピーします。 `AZURE_CLIENT_APP_ID` と `AZURE_SERVER_APP_ID` は一致している必要があります。
 1. それぞれの環境変数にメモした情報などを入力します。
 1. 「src/backend」を開いているターミナルで「quart run」を実行します。
 1. 「src/frontend」を開いているターミナルで「npm run dev」を実行します。
@@ -81,31 +81,34 @@ https://github.com/07JP27/azureopenai-internal-microsoft-search/blob/52053b6c672
 1. 入力エリアに質問を入力してチャットを開始します。
 
 ### 4.Azureへのデプロイ
-TBW
-
 #### Azure リソースの作成
-aaaa
-
+以下のコマンドを実行して、バックエンドAPIをデプロイするApp Serviceを作成します。
 ```sh
+export RG_NAME="resource-group-name"
+export ASP_NAME="app-service-plan-name"
+export APP_NAME="web-app-name"
+
+# リソースグループの作成
+az group create --name $RG_NAME
+
 # App Service Planの作成
-$ az appservice plan create --name <app-service-plan-name> --resource-group <resource-group-name> --sku B1 --is-linux
+az appservice plan create --name $ASP_NAME --resource-group $RG_NAME --sku B1 --is-linux
 
-# Web Appの作成
-
-
-$ az webapp up --name <web-app-name> --resource-group <resource-group-name> --plan <app-service-plan-name> --os-type Linux --runtime "PYTHON|3.11"
-# $ az webapp create --name <web-app-name> --resource-group <resource-group-name> --plan <app-service-plan-name> --runtime "PYTHON|3.11" 
+# App Serviceの作成
+az webapp create --name $APP_NAME --resource-group $RG_NAME --plan $ASP_NAME --runtime "PYTHON|3.11" 
 ```
 
-#### App Serviceの初期設定
-
+####  App Serviceの初期設定
+以下のコマンドを実行して、App Serviceの初期設定を行います。
+`AZURE_CLIENT_APP_ID`、`AZURE_SERVER_APP_ID`、`AZURE_SERVER_APP_SECRET`、`AZURE_TENANT_ID`は前の手順でメモした情報を指定してください。
 ```sh
-$ az webapp config set --resource-group <resource-group-name> --name <web-app-name> --startup-file "python main.py"
-$ az webapp config set --resource-group <ResourceGroup> --name <AppName> --linux-fx-version "PYTHON|3.11"
-$ az webapp config appsettings set --resource-group <ResourceGroup> --name <AppName> --settings \
+# スタートアップコマンドの設定
+az webapp config set --resource-group $RG_NAME --name $APP_NAME --startup-file "python main.py"
+
+# 環境変数の設定
+az webapp config appsettings set --resource-group $RG_NAME --name $APP_NAME --settings \
   SCM_DO_BUILD_DURING_DEPLOYMENT=true \
-  ENABLE_ORYX_BUILD=true \
-  AZURE_OPENAI_CHATGPT_MODEL="<your AOAI model name>" \
+  AZURE_OPENAI_CHATGPT_MODEL="gpt-4o" \
   AZURE_OPENAI_SERVICE="<your AOAI service name>" \
   AZURE_OPENAI_CHATGPT_DEPLOYMENT="<your AOAI deployment name>" \
   AZURE_USE_AUTHENTICATION="true" \
@@ -114,39 +117,47 @@ $ az webapp config appsettings set --resource-group <ResourceGroup> --name <AppN
   AZURE_CLIENT_APP_ID="<your application id copied from app registration on Azure portal>" \
   AZURE_TENANT_ID="<your tenant id copied from app registration on Azure portal>" \
   TOKEN_CACHE_PATH=None
-# SCM基本認証を有効化するコマンドを追加する
+```
 
-TODO: 以下のコマンドを実行して、App ServiceのマネージドIDを有効化し、Azure OpenAI Serviceのアクセス権限を付与する
-App ServiceのマネージドIDを有効化する
-$ az webapp identity assign --resource-group <resource-group-name> --name <app-name>
-$ az webapp identity show --resource-group <resource-group-name> --name <app-name>
-App ServiceのマネージドIDに対して、Azure OpenAI Serviceのアクセス権限を付与する
-$ az role assignment create --role "Cognitive Services OpenAI User" --assignee <app-service-managed-id> --scope /subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.CognitiveServices/accounts/<cognitive-services-name>
+App ServiceがAzure OpenAI Serviceにアクセスできるようにするために、以下のコマンドを実行して、App ServiceのマネージドIDを有効化し、Azure OpenAI Serviceのアクセス権限を付与します。
+* `<app-service-managed-id>`: 上記で有効化したマネージドIDの `principalId` 
+* `<subscription-id>`: AzureサブスクリプションID
+* `<cognitive-services-name>`: 作成したAzure OpenAI Serviceの名前
+```sh
+# App ServiceのマネージドIDを有効化する
+az webapp identity assign --resource-group $RG_NAME --name $APP_NAME
 
-SCM基本認証を有効化するコマンドを追加する
-外部Gitリポジトリからのデプロイを有効化する(main branchではなくgh-sync-deploy branchを指定)
-oryx buildを有効化する必要があるかもしれない
+# App ServiceのマネージドIDが有効化したことを確認する
+az webapp identity show --resource-group $RG_NAME --name $APP_NAME
+
+# App ServiceのマネージドIDに対して、Azure OpenAI Serviceのアクセス権限を付与する
+az role assignment create --role "Cognitive Services OpenAI User" --assignee <app-service-managed-id> --scope /subscriptions/<subscription-id>/resourceGroups/$RG_NAME/providers/Microsoft.CognitiveServices/accounts/<cognitive-services-name>
+
+# 外部Gitリポジトリからのデプロイを有効化する
+az webapp deployment source config --resource-group $RG_NAME --name $APP_NAME --manual-integration --repo-url https://github.com/marumaru1019/POC-GraphSearch-RAG --branch main
+```
+
 
 #### Entra ID へのアプリケーション登録
-Entra ID のアプリケーション登録にApp ServiceのURLを使ったredirect URIを追加する
+App ServiceがMicrosoft Entra IDを介してGraph APIにアクセスできるようにするために、以下の手順でアプリケーション登録を行います。
 
+ローカル実行の際に作成したEntra ID のアプリケーション登録にApp ServiceのURLを使ったredirect URI `"https://$APP_NAME.azurewebsites.net/redirect"` を追加します。（ `http://localhost:8000/redirect` が既にある）`$APP_NAME` はApp Serviceの名前を指定してください。
 
 #### Azure App Serviceへのデプロイ
-
-フロントエンドアプリのビルド
+App Serviceで静的コンテンツをホストするために、以下の手順でフロントエンドのビルドを行います。二回目以降のデプロイでは、フロントエンドに変更を加えていない場合はこの手順はスキップしてください。
 ```sh
-$ cd src/frontend
+$ cd frontend
 $ npm run build
 ```
 
-ローカルのソースコードをApp Serviceにデプロイ
-まずはGitHubリポジトリのデプロイブランチにpushする
+初期設定で指定したリポジトリのブランチにコードをプッシュして、同期コマンドを実行することでApp Serviceにデプロイします。
 ```sh
-$ git checkout gh-sync-deploy
+# ローカルの差分をGitリポジトリにプッシュする
 $ git add .
 $ git commit -m "Deploy to Azure"
 $ git push
-# 次にApp Serviceにデプロイブランチのコードを同期させる
-az webapp deployment source sync --resource-group <resource-group-name> --name <app-name>
+
+# App Serviceにデプロイブランチのコードを同期させる
+az webapp deployment source sync --resource-group $RG_NAME --name $APP_NAME
 ```
 
