@@ -9,14 +9,11 @@ aiofiles==23.2.1
 aiohttp==3.8.5
     # via
     #   -r requirements.in
-    #   microsoft-kiota-authentication-azure
     #   openai
 aiosignal==1.3.1
     # via aiohttp
 anyio==3.7.1
-    # via
-    #   httpx
-    #   watchfiles
+    # via watchfiles
 asgiref==3.7.2
     # via opentelemetry-instrumentation-asgi
 async-timeout==4.0.3
@@ -33,14 +30,11 @@ azure-core==1.29.4
     #   azure-monitor-opentelemetry-exporter
     #   azure-search-documents
     #   azure-storage-blob
-    #   microsoft-kiota-authentication-azure
     #   msrest
 azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
 azure-identity==1.14.0
-    # via
-    #   -r requirements.in
-    #   msgraph-sdk
+    # via -r requirements.in
 azure-monitor-opentelemetry==1.0.0
     # via -r requirements.in
 azure-monitor-opentelemetry-exporter==1.0.0b17
@@ -55,8 +49,6 @@ blinker==1.6.2
     #   quart
 certifi==2023.7.22
     # via
-    #   httpcore
-    #   httpx
     #   msrest
     #   requests
 cffi==1.16.0
@@ -90,24 +82,15 @@ frozenlist==1.4.0
     #   aiosignal
 h11==0.14.0
     # via
-    #   httpcore
     #   hypercorn
     #   uvicorn
     #   wsproto
 h2==4.1.0
-    # via
-    #   httpx
-    #   hypercorn
+    # via hypercorn
 hpack==4.0.0
     # via h2
-httpcore==1.0.7
-    # via httpx
 httptools==0.6.0
     # via uvicorn
-httpx[http2]==0.28.1
-    # via
-    #   microsoft-kiota-http
-    #   msgraph-core
 hypercorn==0.14.4
     # via quart
 hyperframe==6.0.1
@@ -115,7 +98,6 @@ hyperframe==6.0.1
 idna==3.4
     # via
     #   anyio
-    #   httpx
     #   requests
     #   yarl
 importlib-metadata==6.8.0
@@ -138,24 +120,6 @@ markupsafe==2.1.3
     #   jinja2
     #   quart
     #   werkzeug
-microsoft-kiota-abstractions==0.7.1
-    # via
-    #   microsoft-kiota-authentication-azure
-    #   microsoft-kiota-http
-    #   microsoft-kiota-serialization-json
-    #   microsoft-kiota-serialization-text
-    #   msgraph-core
-    #   msgraph-sdk
-microsoft-kiota-authentication-azure==0.3.2
-    # via msgraph-sdk
-microsoft-kiota-http==0.5.0
-    # via
-    #   msgraph-core
-    #   msgraph-sdk
-microsoft-kiota-serialization-json==0.4.2
-    # via msgraph-sdk
-microsoft-kiota-serialization-text==0.3.0
-    # via msgraph-sdk
 msal==1.24.1
     # via
     #   -r requirements.in
@@ -165,10 +129,6 @@ msal-extensions==1.0.0
     # via
     #   -r requirements.in
     #   azure-identity
-msgraph-core==1.0.0a4
-    # via msgraph-sdk
-msgraph-sdk==1.0.0a14
-    # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
 multidict==6.0.4
@@ -190,7 +150,6 @@ opentelemetry-api==1.20.0
     # via
     #   azure-core-tracing-opentelemetry
     #   azure-monitor-opentelemetry-exporter
-    #   microsoft-kiota-authentication-azure
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -250,7 +209,6 @@ opentelemetry-resource-detector-azure==0.1.0
 opentelemetry-sdk==1.20.0
     # via
     #   azure-monitor-opentelemetry-exporter
-    #   microsoft-kiota-authentication-azure
     #   opentelemetry-resource-detector-azure
 opentelemetry-semantic-conventions==0.41b0
     # via
@@ -282,8 +240,6 @@ pandas==2.1.1
     # via openai
 pandas-stubs==2.1.1.230928
     # via openai
-pendulum==3.0.0
-    # via microsoft-kiota-serialization-json
 portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
@@ -291,15 +247,9 @@ priority==2.0.0
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
+    # via msal
 python-dateutil==2.8.2
-    # via
-    #   microsoft-kiota-serialization-text
-    #   pandas
-    #   pendulum
-    #   time-machine
+    # via pandas
 python-dotenv==1.0.0
     # via uvicorn
 pytz==2023.3.post1
@@ -333,8 +283,6 @@ sniffio==1.3.0
     # via anyio
 tiktoken==0.8.0
     # via -r requirements.in
-time-machine==2.16.0
-    # via pendulum
 tqdm==4.66.1
     # via openai
 types-pytz==2023.3.1.1
@@ -345,16 +293,12 @@ typing-extensions==4.8.0
     #   azure-storage-blob
     #   opentelemetry-sdk
 tzdata==2023.3
-    # via
-    #   pandas
-    #   pendulum
-uritemplate==4.1.1
-    # via microsoft-kiota-abstractions
+    # via pandas
 urllib3==2.0.7
     # via requests
-uvicorn[standard]==0.23.2
+uvicorn==0.23.2
     # via -r requirements.in
-uvloop==0.21.0
+# uvloop==0.17.0
     # via uvicorn
 watchfiles==0.20.0
     # via uvicorn
@@ -380,3 +324,6 @@ zipp==3.17.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+
+microsoft-kiota-abstractions==0.8.5
+msgraph-sdk==1.0.0a15
