@@ -138,31 +138,23 @@ markupsafe==2.1.3
     #   jinja2
     #   quart
     #   werkzeug
-microsoft-kiota-abstractions==1.3.3
+microsoft-kiota-abstractions==0.7.1
     # via
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
-    #   microsoft-kiota-serialization-form
     #   microsoft-kiota-serialization-json
-    #   microsoft-kiota-serialization-multipart
     #   microsoft-kiota-serialization-text
     #   msgraph-core
     #   msgraph-sdk
-microsoft-kiota-authentication-azure==1.1.0
+microsoft-kiota-authentication-azure==0.3.2
+    # via msgraph-sdk
+microsoft-kiota-http==0.5.0
     # via
     #   msgraph-core
     #   msgraph-sdk
-microsoft-kiota-http==1.3.4
-    # via
-    #   msgraph-core
-    #   msgraph-sdk
-microsoft-kiota-serialization-form==0.1.1
+microsoft-kiota-serialization-json==0.4.2
     # via msgraph-sdk
-microsoft-kiota-serialization-json==1.3.3
-    # via msgraph-sdk
-microsoft-kiota-serialization-multipart==0.1.0
-    # via msgraph-sdk
-microsoft-kiota-serialization-text==1.0.0
+microsoft-kiota-serialization-text==0.3.0
     # via msgraph-sdk
 msal==1.24.1
     # via
@@ -173,9 +165,9 @@ msal-extensions==1.0.0
     # via
     #   -r requirements.in
     #   azure-identity
-msgraph-core==1.1.7
+msgraph-core==1.0.0a4
     # via msgraph-sdk
-msgraph-sdk==1.14.0
+msgraph-sdk==1.0.0a14
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -198,9 +190,7 @@ opentelemetry-api==1.20.0
     # via
     #   azure-core-tracing-opentelemetry
     #   azure-monitor-opentelemetry-exporter
-    #   microsoft-kiota-abstractions
     #   microsoft-kiota-authentication-azure
-    #   microsoft-kiota-http
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -260,9 +250,7 @@ opentelemetry-resource-detector-azure==0.1.0
 opentelemetry-sdk==1.20.0
     # via
     #   azure-monitor-opentelemetry-exporter
-    #   microsoft-kiota-abstractions
     #   microsoft-kiota-authentication-azure
-    #   microsoft-kiota-http
     #   opentelemetry-resource-detector-azure
 opentelemetry-semantic-conventions==0.41b0
     # via
@@ -295,9 +283,7 @@ pandas==2.1.1
 pandas-stubs==2.1.1.230928
     # via openai
 pendulum==3.0.0
-    # via
-    #   microsoft-kiota-serialization-form
-    #   microsoft-kiota-serialization-json
+    # via microsoft-kiota-serialization-json
 portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
@@ -345,8 +331,6 @@ six==1.16.0
     #   python-dateutil
 sniffio==1.3.0
     # via anyio
-std-uritemplate==2.0.1
-    # via microsoft-kiota-abstractions
 tiktoken==0.8.0
     # via -r requirements.in
 time-machine==2.16.0
@@ -364,6 +348,8 @@ tzdata==2023.3
     # via
     #   pandas
     #   pendulum
+uritemplate==4.1.1
+    # via microsoft-kiota-abstractions
 urllib3==2.0.7
     # via requests
 uvicorn[standard]==0.23.2
