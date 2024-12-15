@@ -83,6 +83,9 @@ https://github.com/07JP27/azureopenai-internal-microsoft-search/blob/52053b6c672
 ### 4.Azureへのデプロイ
 TBW
 
+#### Azure リソースの作成
+aaaa
+
 ```sh
 # App Service Planの作成
 $ az appservice plan create --name <app-service-plan-name> --resource-group <resource-group-name> --sku B1 --is-linux
@@ -92,6 +95,11 @@ $ az appservice plan create --name <app-service-plan-name> --resource-group <res
 
 $ az webapp up --name <web-app-name> --resource-group <resource-group-name> --plan <app-service-plan-name> --os-type Linux --runtime "PYTHON|3.11"
 # $ az webapp create --name <web-app-name> --resource-group <resource-group-name> --plan <app-service-plan-name> --runtime "PYTHON|3.11" 
+```
+
+#### App Serviceの初期設定
+
+```sh
 $ az webapp config set --resource-group <resource-group-name> --name <web-app-name> --startup-file "python main.py"
 $ az webapp config set --resource-group <ResourceGroup> --name <AppName> --linux-fx-version "PYTHON|3.11"
 $ az webapp config appsettings set --resource-group <ResourceGroup> --name <AppName> --settings \
@@ -106,13 +114,39 @@ $ az webapp config appsettings set --resource-group <ResourceGroup> --name <AppN
   AZURE_CLIENT_APP_ID="<your application id copied from app registration on Azure portal>" \
   AZURE_TENANT_ID="<your tenant id copied from app registration on Azure portal>" \
   TOKEN_CACHE_PATH=None
+```
 
-# フロントエンドアプリのビルド
+TODO: 以下のコマンドを実行して、App ServiceのマネージドIDを有効化し、Azure OpenAI Serviceのアクセス権限を付与する
+App ServiceのマネージドIDを有効化する
+$ az webapp identity assign --resource-group <resource-group-name> --name <app-name>
+$ az webapp identity show --resource-group <resource-group-name> --name <app-name>
+App ServiceのマネージドIDに対して、Azure OpenAI Serviceのアクセス権限を付与する
+$ az role assignment create --role "Cognitive Services OpenAI User" --assignee <app-service-managed-id> --scope /subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.CognitiveServices/accounts/<cognitive-services-name>
+
+SCM基本認証を有効化するコマンドを追加する
+外部Gitリポジトリからのデプロイを有効化する(main branchではなくgh-sync-deploy branchを指定)
+oryx buildを有効化する必要があるかもしれない
+
+#### Entra ID へのアプリケーション登録
+Entra ID のアプリケーション登録にApp ServiceのURLを使ったredirect URIを追加する
+
+
+#### Azure App Serviceへのデプロイ
+
+フロントエンドアプリのビルド
+```sh
 $ cd src/frontend
 $ npm run build
-
-# ローカルのリポジトリをリモートのWeb Appにデプロイ
-$ cd ../backend
-$ zip -rFS ./app.zip ./*
-$ az webapp deploy --resource-group <resource-group-name> --name <app-name> --type zip --src-path ./app.zip
 ```
+
+ローカルのソースコードをApp Serviceにデプロイ
+まずはGitHubリポジトリのデプロイブランチにpushする
+```sh
+$ git checkout gh-sync-deploy
+$ git add .
+$ git commit -m "Deploy to Azure"
+$ git push
+# 次にApp Serviceにデプロイブランチのコードを同期させる
+az webapp deployment source sync --resource-group <resource-group-name> --name <app-name>
+```
+
